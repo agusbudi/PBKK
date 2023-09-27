@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Form;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
 class FormController extends Controller
@@ -22,22 +24,32 @@ class FormController extends Controller
             'image' => 'required|max:2048|mimes:jpg,jpeg,png'
         ]);
 
-        $request->pict->storeAs('public/images', $request->pict->getClientOriginalName());
+        $filename = time() . '_' . $request->image->getClientOriginalName();
+
+        $request->image->storeAs('public/images', $filename);
 
         $results = [
             'email' => $request->email,
-            'password' => $request->password,
+            'password' => Hash::make($request->password),
             'name' => $request->name,
             'float' => $request->float,
-            'image' => $request->pict->getClientOriginalName(),
+            'image' => $filename,
         ];
 
-        return redirect('/result')->with(['results' => $results, 'status' => 'Form submitted!']);
+        Form::create($results);
+
+        return redirect()->back()->with(['status' => 'Form submitted!']);
     }
 
-    public function result()
+    public function result(String $name)
     {
-        $results = session()->get('results');
+        $form = Form::where('name', $name)->first();
+        $results = [
+            'email' => $form->email,
+            'name' => $form->name,
+            'float' => $form->float,
+            'image' => $form->image
+        ];  
 
         return view('result', [
             'results' => $results

@@ -22,4 +22,4 @@ Route::get('/form', [FormController::class, 'index']);
 
 Route::post('/form', [FormController::class, 'show']);
 
-Route::get('/result', [FormController::class, 'result']);
+Route::get('/result/{name}', [FormController::class, 'result']);

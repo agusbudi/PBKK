@@ -51,6 +51,11 @@
                     <div class="alert alert-danger fs-6 text">{{ $message }}</div>
                     @enderror
                 </div>
+                @if (session('status'))
+                <div class="alert alert-success">
+                    {{ session('status') }}
+                </div>
+                @endif
                 <button type="submit" class="btn btn-primary mt-3">Submit</button>
             </form>
         </div>
